@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrderMind - Chat</title>
+<link rel="stylesheet" href="/static/orders/style.css">
+</head>
+<body class="chat-body">
+
+    <header class="chat-header">
+        <div class="chat-header-brand">
+            <span class="auth-brand-icon">&#128172;</span>
+            <span>OrderMind</span>
+        </div>
+        <button id="logout-btn" class="btn-ghost">Log out</button>
+    </header>
+
+    <main class="chat-main">
+        <section class="scenario-bar" id="scenario-bar">
+            <button class="scenario-btn" data-message="Show me my recent orders">My Orders</button>
+            <button class="scenario-btn" data-message="What is the status of my order?">Order Status</button>
+            <button class="scenario-btn" data-message="Where is my shipment?">Track Shipment</button>
+            <button class="scenario-btn" data-message="Show me the details of my order">Order Details</button>
+            <button class="scenario-btn" data-message="I want to cancel my order">Cancel Order</button>
+            <button class="scenario-btn" data-message="I want to return an item">Return / Refund</button>
+        </section>
+
+        <section id="messages" class="messages" aria-live="polite">
+            <div class="message message-bot">
+                <div class="message-bubble">
+                    Hi! I'm your OrderMind assistant. Ask me about your orders, shipments, cancellations, or returns.
+                </div>
+            </div>
+        </section>
+
+        <form id="chat-form" class="chat-input-bar">
+            <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off" required>
+            <button type="submit" id="chat-send" class="btn-primary">Send</button>
+        </form>
+    </main>
+
+    <script src="/static/orders/common.js"></script>
+    <script src="/static/orders/chat.js"></script>
+</body>
+</html>

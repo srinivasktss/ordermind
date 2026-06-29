@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrderMind - Login</title>
+<link rel="stylesheet" href="/static/users/style.css">
+</head>
+<body class="auth-body">
+
+    <div class="auth-card">
+        <div class="auth-brand">
+            <span class="auth-brand-icon">&#128172;</span>
+            <h1>OrderMind</h1>
+            <p class="auth-subtitle">Sign in to chat with your order assistant</p>
+        </div>
+
+        <form id="login-form" class="auth-form" novalidate>
+            <div class="form-field">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" autocomplete="username" required>
+            </div>
+
+            <div class="form-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" autocomplete="current-password" required>
+            </div>
+
+            <div id="login-error" class="form-error" hidden></div>
+
+            <button type="submit" id="login-submit" class="btn-primary">
+                <span class="btn-label">Sign In</span>
+                <span class="btn-spinner" hidden></span>
+            </button>
+        </form>
+    </div>
+
+    <script src="/static/users/login.js"></script>
+</body>
+</html>
