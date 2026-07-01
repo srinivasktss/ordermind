@@ -1,18 +1,23 @@
 /**
  * Chat page logic.
  *
- * Expected backend contract (to be implemented in Django):
- *   POST /api/chat/  body: { message }
+ * Backend contract (chats app):
+ *   POST /chats/  body: { messages: [{role, content}, ...] }  <- full history each time
  *   -> 200 OK + JSON: { "reply": "<text Claude said>", "orders": [ ... ] (optional) }
  *   -> 401            if the session isn't authenticated (redirects to /users/login/)
  *
  * Backend contract (users app):
  *   POST /users/logout -> 200 OK, clears the session
  *
+ * Conversation history is kept in-memory only. Refreshing the page starts a new chat.
  * Order objects (optional "orders" field) are rendered as cards via
  * renderOrderCard() from common.js — expected shape: order_number,
  * status, created_at, total.
  */
+
+// In-memory conversation history in Anthropic message format.
+// Cleared on every page load (refresh = new chat).
+const conversationHistory = [];
 
 const messagesEl = document.getElementById('messages');
 const form = document.getElementById('chat-form');
@@ -58,15 +63,18 @@ function appendTypingIndicator() {
 }
 
 async function sendMessage(text) {
+    // Add user message to history before sending
+    conversationHistory.push({ role: 'user', content: text });
+
     appendMessage(text, 'user');
     input.value = '';
     setInputDisabled(true);
     const typingIndicator = appendTypingIndicator();
 
     try {
-        const response = await apiFetch('/api/chat/', {
+        const response = await apiFetch('/chats/', {
             method: 'POST',
-            body: JSON.stringify({ message: text }),
+            body: JSON.stringify({ messages: conversationHistory }),
         });
 
         if (response.status === 401) {
@@ -78,9 +86,14 @@ async function sendMessage(text) {
         typingIndicator.remove();
 
         if (!response.ok) {
+            // Remove the user message from history so it can be retried
+            conversationHistory.pop();
             appendMessage(data.error || 'Something went wrong. Please try again.', 'bot');
             return;
         }
+
+        // Add assistant reply to history to maintain context on next send
+        conversationHistory.push({ role: 'assistant', content: data.reply || '' });
 
         appendMessage(data.reply || '', 'bot');
         if (Array.isArray(data.orders) && data.orders.length > 0) {
@@ -88,6 +101,8 @@ async function sendMessage(text) {
         }
     } catch (err) {
         typingIndicator.remove();
+        // Remove the user message from history so it can be retried
+        conversationHistory.pop();
         appendMessage('Could not reach the server. Please try again.', 'bot');
     } finally {
         setInputDisabled(false);
